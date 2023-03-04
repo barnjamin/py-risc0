@@ -148,11 +148,35 @@ def verify(raw_seal: bytes, method: Method):
 
 
 if __name__ == "__main__":
-    
-    with open("trivial.seal", "rb") as f:
+
+    from pathlib import Path
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        prog="Risc0 Verifier",
+        description="Verifies a Risc0 execution receipt",
+    )
+
+    parser.add_argument(
+        "--path", "-p",
+        help="Path to the execution artifacts",
+        default="./programs",
+        required=False,
+    )
+    parser.add_argument(
+        "-name", "-n", help="Name of the program", default="trivial", required=False
+    )
+
+    args = parser.parse_args()
+
+    p = Path(args.path)
+    seal_file = p / f"{args.name}.seal"
+    method_file = p / f"{args.name}.method"
+
+    with open(seal_file, "rb") as f:
         seal = f.read()
 
-    with open("trivial.method", "rb") as f:
+    with open(method_file, "rb") as f:
         method = Method.from_bytes(f.read())
 
     verify(seal, method)
